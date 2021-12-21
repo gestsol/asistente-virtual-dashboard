@@ -1,0 +1,50 @@
+<div class="d-flex h-100" style="width: 280px; position: fixed;">
+    <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
+        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+            <mat-icon class="me-2" aria-hidden="false" >touch_app</mat-icon>
+          <span class="fs-4">Asistente Virtual</span>
+        </a>
+        <hr>
+        <ul class="nav nav-pills flex-column mb-auto">
+          <li class="nav-item">
+            <a href="#" class="nav-link text-white active d-flex align-items-center" aria-current="page">
+                <mat-icon aria-hidden="false" >article</mat-icon>
+                <p class="ms-2 mb-0">Opciones</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link text-white d-flex align-items-center" aria-current="page">
+                <mat-icon aria-hidden="false" >settings</mat-icon>
+                <p class="ms-2 mb-0 ">Configuración</p>
+            </a>
+          </li>
+
+        </ul>
+        <hr>
+        <div class="dropdown">
+          <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="assets/images/wit.png" alt="" width="32" height="32" class="rounded-circle me-2">
+            <strong>WIT</strong>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+            <li><a class="dropdown-item" href="#">New project...</a></li>
+            <li><a class="dropdown-item" href="#">Settings</a></li>
+            <li><a class="dropdown-item" href="#">Profile</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#">Sign out</a></li>
+          </ul>
+        </div>
+      </div>
+</div>
+
+<div class="container-fluid h-100" style="padding-left: 300px">
+    <div class="row h-100">
+        
+        <div class="col">
+           <router-outlet></router-outlet> 
+        </div>
+    </div>
+
+</div>
+
+
