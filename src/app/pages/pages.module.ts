@@ -5,7 +5,6 @@ import { PagesComponent } from './pages.component';
 import { PagesRoutes } from './pages.routing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { HomeComponent } from './home/home.component';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -17,15 +16,20 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatTabsModule} from '@angular/material/tabs';
 
+import { HomeComponent } from './home/home.component';
+import { OptionComponent } from './home/option/option.component';
 const Components = [
   PagesComponent,
-  HomeComponent
+  HomeComponent,
+  OptionComponent
 ];
 
 
 @NgModule({
-  declarations: [...Components],
+  declarations: [...Components ],
   imports: [
     CommonModule,
     FormsModule,
@@ -42,6 +46,8 @@ const Components = [
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
+    MatTabsModule,
+    MatCheckboxModule,
     RouterModule.forChild(PagesRoutes)
   ],
 })

@@ -1,24 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSort } from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-}
+import { forkJoin, Subscription } from 'rxjs';
+import { OptionsService } from 'src/app/services/resources.service';
+import Swal from 'sweetalert2'
+import { OptionComponent } from './option/option.component';
 
-const ELEMENT_DATA: PeriodicElement[] = [
-  {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
-  {position: 2, name: 'Helium', weight: 4.0026, symbol: 'He'},
-  {position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li'},
-  {position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be'},
-  {position: 5, name: 'Boron', weight: 10.811, symbol: 'B'},
-  {position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C'},
-  {position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N'},
-  {position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O'},
-  {position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F'},
-  {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne'},
-];
 
 @Component({
   selector: 'app-home',
@@ -26,16 +16,134 @@ const ELEMENT_DATA: PeriodicElement[] = [
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-  displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
-  dataSource = new MatTableDataSource(ELEMENT_DATA);
+  public options!:any
+  public getAllDataSub?: Subscription
+  public displayedColumns: string[] = ['optionNumber', 'optionDescription','acciones'];
+  public dataSource!: MatTableDataSource<any> /* = new MatTableDataSource(ELEMENT_DATA); */
 
-  constructor() { }
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
+  constructor(private cd: ChangeDetectorRef,private snack: MatSnackBar,private dialog: MatDialog, public optionService:OptionsService) { }
 
   ngOnInit(): void {
+    this.presentLoader()
+    this.getAllData()
   }
+
+  getAllData() {
+    this.getAllDataSub = forkJoin([this.optionService.getOptions()])
+      .subscribe((([options ]) => {
+        console.log('Options',options)
+        this.options = options['results']
+
+        this.dataSource = new MatTableDataSource(this.options);
+
+        if (this.dataSource) {
+          setTimeout(() => {
+            this.dataSource.paginator = this.paginator;
+            this.dataSource.sort = this.sort;
+
+          }, 0);
+        }
+
+
+      }),
+        error => {
+          console.log(error)
+        },
+        () => {
+          /* this.filterPredicated() */
+          Swal.close()
+          this.cd.markForCheck()
+        })
+
+  }
+
+  openPopUp(data: any = {}, isNew?:any) {
+    let title = isNew ? 'Añadir Opcion' : 'Actualizar Opcion';
+    let dialogRef: MatDialogRef<any> = this.dialog.open(OptionComponent, {
+      width: '700px',
+      /* disableClose: true, */
+      data: { title: title, payload: data, options:this.options}
+    })
+    dialogRef.afterClosed().subscribe((res) => {
+      if(!res) {
+        return;
+      }
+      this.presentLoader()
+ 
+      if (isNew) {
+
+        this.optionService.addOption(res).toPromise().then((resp)=>{
+          /* console.log(res) */
+          this.getAllData() 
+          Swal.fire('Realizado','Opción Agregada','success')
+        })
+
+
+      } else {
+        console.log(res);
+        this.optionService.updateOption(res,res.id_).toPromise().then((resp)=>{
+          this.getAllData() 
+          Swal.fire('Realizado','Opción Actualizada','success')
+          /* console.log(resp) */
+        })
+
+      }
+       
+    }
+    )
+  }
+
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  presentLoader(){
+    Swal.fire({
+      title: 'Cargando',
+      allowOutsideClick: false,
+      timerProgressBar: true,
+      didOpen: () => {
+        Swal.showLoading()
+      },
+    })
+  }
+
+  deleteItem(item:any) {
+    console.log(item);
+    Swal.fire({
+      title: 'Desea eliminar:',
+      html: ` <strong>${item.optionDescription}</strong>?` ,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Confirmar'
+    }).then((result) => {
+      
+      
+      if (result.isConfirmed) {
+        this.presentLoader()
+        this.optionService.deleteOption(item._id).toPromise().then((res)=>{
+          
+          this.getAllData() 
+          Swal.fire('Eliminado','Pelicula eliminada','success')
+        })
+      }
+      
+    })
+   
+  }
+
+ 
+
+  ngOnDestroy() {
+    if (this.getAllDataSub) {
+      this.getAllDataSub.unsubscribe()
+    }
   }
 }

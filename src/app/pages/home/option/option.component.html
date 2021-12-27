@@ -1,0 +1,75 @@
+<h1 matDialogTitle>{{data.title}}</h1>
+<form [formGroup]="itemForm">
+  <div class="row">
+
+    <div class="pr-1 col-4">
+      <mat-form-field class="w-100" appearance="outline">
+        <mat-label>Numero Opcion:</mat-label>
+        <input matInput name="optionNumber" type="number" formControlName="optionNumber" placeholder="Numero Opcion">
+        <mat-error *ngIf="itemForm.controls['optionNumber'].hasError('required')">
+          Opción es requerido
+        </mat-error>
+        <!-- <mat-error *ngIf="itemForm.controls['name'].hasError('minlength')">
+             El nombre debe tener un mínimo de 3 caracteres
+           </mat-error> -->
+      </mat-form-field>
+    </div>
+
+    <div class="pr-1 col">
+      <mat-form-field class="w-100" appearance="outline">
+        <mat-label>Descripción</mat-label>
+        <input matInput name="optionDescription" type="text" formControlName="optionDescription" placeholder="Descripción" >
+        <mat-error *ngIf="itemForm.controls['optionDescription'].hasError('required')">
+          Descripción de Opción es requerido
+        </mat-error>
+      </mat-form-field>
+
+    </div>
+
+    <div class="col-12">
+      <h5 class="text-center">Acciones (Opcionales)</h5>
+      <mat-tab-group dynamicHeight>
+        <mat-tab label="Respuesta-Mensaje">
+          <div class="mat-elevation-z4">
+            <mat-form-field class="w-100" appearance="outline">
+              <mat-label>Respuesta</mat-label>
+              <textarea matInput name="action" type="text" formControlName="action" placeholder="Respuesta del Mensaje" rows="10" ></textarea>
+            </mat-form-field>
+          </div>
+        </mat-tab>
+        <mat-tab label="Sub Opciones">
+          <div class="mat-elevation-z4 d-flex justify-content-center">
+            <!-- Refactorizar html para editar opciones de forma dinamica -->
+            <mat-form-field appearance="fill" style=" width: 450px; margin-top: 20px;">
+              <mat-label>Opciones a asociar</mat-label>
+              <mat-select formControlName="options" multiple >
+                <mat-option *ngFor="let option of options" [value]="option._id">
+                  <strong>({{option.optionNumber}}) </strong>
+                  {{option.optionDescription}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+             <!-- Refactorizar html para editar opciones de forma dinamica -->
+
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+
+    </div>
+  </div>
+  <div class="row d-flex justify-content-between mt-1">
+    <div class="col-2">
+      <button class="btn btn-primary" type="button" [disabled]="itemForm.invalid" (click)="submit()" > Guardar
+      </button>
+    </div>
+  
+    <div class="col-2">
+      <button (click)="dialogRef.close(false)" type="button" class="btn btn-danger">Cancelar </button>
+  
+    </div>
+  </div>
+</form>
+
+
+
+

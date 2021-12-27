@@ -5,77 +5,86 @@ import { map } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
-export class ResourcesService {
+export class OptionsService {
   
-  public apiUrl = '/api'
+  public apiUrl = 'http://5392-2800-810-599-d9a-7811-117f-2e57-ebb3.ngrok.io/api/v1/options'
 
   constructor(private http: HttpClient) {}
 
 
   /* Buscador  */
-  searchResources(value: string) {
+  searchOptions(value: string) {
     const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
-    const endpoint = `${this.apiUrl}/m_resources`;
+    const endpoint = `${this.apiUrl}`;
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
     const params = new HttpParams().set('search', value)
-    return this.http.get<any>(endpoint, { headers: headers, withCredentials: true, params })
+    return this.http.get<any>(endpoint, /* { headers: headers, withCredentials: true, params } */)
   }
   /* Buscador */
 
 
-  add(data: Object ) {
+  addOption(data: any |Object) {
+
+    delete data['id_']
+
+    if (data['action'] === '') {
+      delete data['action']
+    }
+
+    if (data['options'].length === 0 ) {
+      delete data['options']
+    }
 
     const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
-    const endpoint = `${this.apiUrl}/m_resources`;
+    const endpoint = `${this.apiUrl}`;
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     })
 
-    /* const body = {
-      resource_movie:
-      {
-        ...data
-      }
-    } */
+    const body = {...data }
 
-    let formData = new FormData();
+    /* let formData = new FormData(); */
 
 
-    return this.http.post<any>(endpoint, formData, { headers: headers, withCredentials: true })
+    return this.http.post<any>(endpoint, body, /* { headers: headers, withCredentials: true } */)
   }
 
-  update(data: Object,id:string ) {
+  updateOption(data: any | Object,id:string ) {
 
     const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
-    const endpoint = `${this.apiUrl}/m_resources/${id}`;
+    const endpoint = `${this.apiUrl}/${id}`;
     const headers = new HttpHeaders({'Authorization': `Bearer ${token}`})
 
+    delete data['id_']
 
-    /* const body = {
-      resource_movie:
-      {
-        ...data
-      }
-    } */
+    if (data['action'] === '') {
+      delete data['action']
+    }
 
-    let formData = new FormData();
-    return this.http.patch<any>(endpoint, formData, { headers: headers, withCredentials: true })
+    if (data['options'].length === 0 ) {
+      delete data['options']
+    }
+
+    const body = {...data}
+
+   /*  let formData = new FormData(); */
+    return this.http.patch<any>(endpoint, body,/*  { headers: headers, withCredentials: true } */)
   }
 
-  delete(id: string) {
+  deleteOption(id: string) {
 
     const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
-    const endpoint = `${this.apiUrl}/m_resources/${id}`;
+    const endpoint = `${this.apiUrl}/${id}`;
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
 
-    return this.http.delete<any>(endpoint, { headers: headers, withCredentials: true })
+    return this.http.delete<any>(endpoint, /* { headers: headers, withCredentials: true } */)
   }
 
-  getResources() {
+  getOptions() {
     const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
-    const endpoint = `${this.apiUrl}/m_resources`;
+    const endpoint = `${this.apiUrl}`;
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
-    return this.http.get<any>(endpoint, { headers: headers, withCredentials: true })
+    return this.http.get<any>(endpoint,/*  { headers: headers, withCredentials: true } */)
   }
 
 }

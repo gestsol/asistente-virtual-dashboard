@@ -1,5 +1,9 @@
-export interface User {
+export interface Option {
     _id: string;
-    name: string;
-    status: number;
+    optionNumber: number;
+    optionDescription: string;
+    options?: any[];
+    __v: number;
+    action?: string;
+    parentOpt?: string;
 }
