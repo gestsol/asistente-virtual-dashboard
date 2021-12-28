@@ -1,19 +1,20 @@
 <div class="d-flex h-100" style="width: 280px; position: fixed;">
     <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
         <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-            <mat-icon class="me-2" aria-hidden="false" >touch_app</mat-icon>
-          <span class="fs-4">Asistente Virtual</span>
+            <!-- <mat-icon class="me-2" aria-hidden="false" >touch_app</mat-icon> -->
+            <img src="assets/images/asistente.png" width="30px" alt="" srcset="">
+          <span class="ms-3 fs-4">Asistente Virtual</span>
         </a>
         <hr>
         <ul class="nav nav-pills flex-column mb-auto">
           <li class="nav-item">
-            <a href="#" class="nav-link text-white active d-flex align-items-center" aria-current="page">
-                <mat-icon aria-hidden="false" >article</mat-icon>
-                <p class="ms-2 mb-0">Opciones</p>
+            <a routerLink="/pages/home" routerLinkActive="active" class="nav-link text-white  d-flex align-items-center" aria-current="page">
+                <mat-icon aria-hidden="false" >account_tree</mat-icon>
+                <p class="ms-2 mb-0">Arbol de Opciones</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link text-white d-flex align-items-center" aria-current="page">
+            <a routerLinkActive="active" class="nav-link text-white d-flex align-items-center" aria-current="page">
                 <mat-icon aria-hidden="false" >settings</mat-icon>
                 <p class="ms-2 mb-0 ">Configuración</p>
             </a>

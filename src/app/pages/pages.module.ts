@@ -18,9 +18,10 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatTabsModule} from '@angular/material/tabs';
-
+import {MatExpansionModule} from '@angular/material/expansion';
 import { HomeComponent } from './home/home.component';
 import { OptionComponent } from './home/option/option.component';
+import {MatTreeModule} from '@angular/material/tree';
 const Components = [
   PagesComponent,
   HomeComponent,
@@ -34,6 +35,8 @@ const Components = [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    MatTreeModule,
+    MatExpansionModule,
     MatSelectModule,
     MatFormFieldModule,
     MatInputModule,

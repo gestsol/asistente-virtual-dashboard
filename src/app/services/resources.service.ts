@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { map } from 'rxjs/operators';
+import { RespOptions } from '../interfaces/interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OptionsService {
   
-  public apiUrl = 'http://5392-2800-810-599-d9a-7811-117f-2e57-ebb3.ngrok.io/api/v1/options'
+  public apiUrl = 'http://7b56-181-95-241-222.ngrok.io/api/v1/options'
 
   constructor(private http: HttpClient) {}
 
@@ -84,7 +85,10 @@ export class OptionsService {
     const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
     const endpoint = `${this.apiUrl}`;
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
-    return this.http.get<any>(endpoint,/*  { headers: headers, withCredentials: true } */)
+    return this.http.get<RespOptions>(endpoint,/*  { headers: headers, withCredentials: true } */)/* .pipe(map((resp)=>{
+      let data = resp.results.filter((item)=> !item.hasOwnProperty('parentOpt'))
+      return data
+    })) */
   }
 
 }

@@ -1,10 +1,13 @@
+import { NestedTreeControl } from '@angular/cdk/tree';
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
+import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { forkJoin, Subscription } from 'rxjs';
+import { Option } from 'src/app/interfaces/interfaces';
 import { OptionsService } from 'src/app/services/resources.service';
 import Swal from 'sweetalert2'
 import { OptionComponent } from './option/option.component';
@@ -16,13 +19,17 @@ import { OptionComponent } from './option/option.component';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-  public options!:any
+  public options!:Array<Option>
   public getAllDataSub?: Subscription
-  public displayedColumns: string[] = ['optionNumber', 'optionDescription','acciones'];
-  public dataSource!: MatTableDataSource<any> /* = new MatTableDataSource(ELEMENT_DATA); */
+  /*public displayedColumns: string[] = ['optionNumber', 'optionDescription','acciones'];
+  public dataSource!: MatTableDataSource<any>  = new MatTableDataSource(ELEMENT_DATA); */
+  
+  public treeControl = new NestedTreeControl<Option>(node => node.options);
+  public dataSourceTree = new MatTreeNestedDataSource<Option>();
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
+  /* @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort; */
+
 
   constructor(private cd: ChangeDetectorRef,private snack: MatSnackBar,private dialog: MatDialog, public optionService:OptionsService) { }
 
@@ -30,24 +37,16 @@ export class HomeComponent implements OnInit {
     this.presentLoader()
     this.getAllData()
   }
+  
 
   getAllData() {
     this.getAllDataSub = forkJoin([this.optionService.getOptions()])
       .subscribe((([options ]) => {
         console.log('Options',options)
-        this.options = options['results']
+        
+        this.options = options['results'].filter((item)=> !item.hasOwnProperty('parentOpt'))
 
-        this.dataSource = new MatTableDataSource(this.options);
-
-        if (this.dataSource) {
-          setTimeout(() => {
-            this.dataSource.paginator = this.paginator;
-            this.dataSource.sort = this.sort;
-
-          }, 0);
-        }
-
-
+        this.dataSourceTree.data = this.options
       }),
         error => {
           console.log(error)
@@ -60,12 +59,14 @@ export class HomeComponent implements OnInit {
 
   }
 
+  hasChild = (_: number, node: Option) => !!node.options && node.options.length > 0;
+
   openPopUp(data: any = {}, isNew?:any) {
-    let title = isNew ? 'Añadir Opcion' : 'Actualizar Opcion';
+    let title = isNew ? 'Añadir Opción' : 'Actualizar Opción';
     let dialogRef: MatDialogRef<any> = this.dialog.open(OptionComponent, {
-      width: '700px',
+      width: '900px',
       /* disableClose: true, */
-      data: { title: title, payload: data, options:this.options}
+      data: { title: title, payload: data}
     })
     dialogRef.afterClosed().subscribe((res) => {
       if(!res) {
@@ -79,6 +80,9 @@ export class HomeComponent implements OnInit {
           /* console.log(res) */
           this.getAllData() 
           Swal.fire('Realizado','Opción Agregada','success')
+        }).catch((e)=>{
+          console.log(e)
+          this.presentAlert(e.error.error)
         })
 
 
@@ -88,6 +92,8 @@ export class HomeComponent implements OnInit {
           this.getAllData() 
           Swal.fire('Realizado','Opción Actualizada','success')
           /* console.log(resp) */
+        }).catch((e)=>{console.log(e.error.error)
+          this.presentAlert(e.error.error)
         })
 
       }
@@ -97,10 +103,10 @@ export class HomeComponent implements OnInit {
   }
 
 
-  applyFilter(event: Event) {
+  /* applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
+  } */
 
   presentLoader(){
     Swal.fire({
@@ -110,6 +116,14 @@ export class HomeComponent implements OnInit {
       didOpen: () => {
         Swal.showLoading()
       },
+    })
+  }
+
+  presentAlert(msg:string){
+    Swal.fire({
+      title: 'Alerta',
+      html: `${msg}` ,
+      icon: 'error',
     })
   }
 
