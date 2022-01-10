@@ -3,14 +3,36 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { RespOptions } from '../interfaces/interfaces';
 
+declare var EmojiPicker:any
+
 @Injectable({
   providedIn: 'root'
 })
 export class OptionsService {
   
-  public apiUrl = 'http://7b56-181-95-241-222.ngrok.io/api/v1/options'
+  public apiUrl = 'http://a40c-2800-810-599-d9a-cb1-c08b-7a51-92e1.ngrok.io/api/v1/options'
+  public picker:any
+  constructor(private http: HttpClient) {
 
-  constructor(private http: HttpClient) {}
+  }
+
+  initEmojiPicker(){
+    //Inicializamos el EmojiPicker desde el servicio dado que debe inicializar una sola vez en la app y no desde cada ngOnInit de los componentes
+    if(!this.picker ){
+
+      this.picker = new EmojiPicker({
+        trigger: [
+            {
+              selector: ['.button-emoji'],
+              insertInto: ['.emoji-area'] ,
+            }
+        ],
+        closeButton: true,
+    });
+  
+      console.log(this.picker)
+    }
+  }
 
 
   /* Buscador  */

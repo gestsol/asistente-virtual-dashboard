@@ -8,7 +8,7 @@ import {MatTableDataSource} from '@angular/material/table';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { forkJoin, Subscription } from 'rxjs';
 import { Option } from 'src/app/interfaces/interfaces';
-import { OptionsService } from 'src/app/services/resources.service';
+import { OptionsService } from 'src/app/services/options.service';
 import Swal from 'sweetalert2'
 import { OptionComponent } from './option/option.component';
 

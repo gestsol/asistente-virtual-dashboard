@@ -3,6 +3,9 @@ import { FormBuilder, Validators, FormGroup, FormControl } from '@angular/forms'
 import {MatDialog, MAT_DIALOG_DATA,MatDialogRef} from '@angular/material/dialog';
 import { Option } from 'src/app/interfaces/interfaces';
 import Swal from 'sweetalert2'
+import { OptionsService } from '../../../services/options.service';
+
+declare var EmojiPicker:any
 @Component({
   selector: 'app-option',
   templateUrl: './option.component.html',
@@ -12,17 +15,18 @@ export class OptionComponent implements OnInit {
 
   public itemForm!: FormGroup;
   public options!:Array<Option> //array con los Id's de las opciones a relacionar
-
+  public picker:any
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, 
   public dialogRef: MatDialogRef<OptionComponent>,
-  private fb: FormBuilder) { }
+  private fb: FormBuilder, public rsService:OptionsService) { }
 
   ngOnInit(): void {
     console.log('ngOnInitPopup', this.data.payload);
     this.options = this.data.options
     this.buildItemForm(this.data.payload)
     
-  }
+    this.rsService.initEmojiPicker() 
+   }
 
  
   buildItemForm(item:any) {
@@ -52,18 +56,28 @@ export class OptionComponent implements OnInit {
 
   validMinValue(event:any){
     const value = event.target.value
-    console.log(value)
+    /* console.log(value) */
     if (Math.sign(value) === -1) {
       event.target.value = 1
     }
-
     
+  }
+ 
+  changeTextArea(event:any){
+    
+    const value = event.target.value
+    /* console.log(value) */
+    this.itemForm.patchValue({action:value})
   }
   
   submit(){
     console.log(this.itemForm?.value);
 
-
+    const element = document.getElementsByClassName('emoji-area')[0] as HTMLTextAreaElement
+    if(element.value.length > 0){
+      this.itemForm.patchValue({action:element.value})
+    }
+  
     /* Swal.fire({
       title: 'Solo se puede agregar',
       html: `Respuesta o Opciones` ,

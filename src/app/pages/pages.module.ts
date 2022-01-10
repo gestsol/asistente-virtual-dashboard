@@ -22,6 +22,8 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import { HomeComponent } from './home/home.component';
 import { OptionComponent } from './home/option/option.component';
 import {MatTreeModule} from '@angular/material/tree';
+import { ComponentsModule } from '../components/components.module';
+import { AssistantsComponent } from './assistants/assistants.component';
 const Components = [
   PagesComponent,
   HomeComponent,
@@ -30,7 +32,7 @@ const Components = [
 
 
 @NgModule({
-  declarations: [...Components ],
+  declarations: [...Components, AssistantsComponent ],
   imports: [
     CommonModule,
     FormsModule,
@@ -51,6 +53,7 @@ const Components = [
     MatSortModule,
     MatTabsModule,
     MatCheckboxModule,
+    ComponentsModule,
     RouterModule.forChild(PagesRoutes)
   ],
 })
