@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { map } from 'rxjs/operators';
 import { RespOptions } from '../interfaces/interfaces';
 
+import { environment } from 'src/environments/environment';
+
+import Swal from 'sweetalert2'
 declare var EmojiPicker:any
 
 @Injectable({
@@ -10,10 +12,29 @@ declare var EmojiPicker:any
 })
 export class OptionsService {
   
-  public apiUrl = 'http://a40c-2800-810-599-d9a-cb1-c08b-7a51-92e1.ngrok.io/api/v1/options'
+  public apiUrl = environment.apiBackend + '/api/v1/options'
   public picker:any
   constructor(private http: HttpClient) {
 
+  }
+
+  presentLoader(){
+    Swal.fire({
+      title: 'Cargando',
+      allowOutsideClick: false,
+      timerProgressBar: true,
+      didOpen: () => {
+        Swal.showLoading()
+      },
+    })
+  }
+
+  presentAlert(msg:string){
+    Swal.fire({
+      title: 'Alerta',
+      html: `${msg}` ,
+      icon: 'error',
+    })
   }
 
   initEmojiPicker(){
@@ -37,11 +58,10 @@ export class OptionsService {
 
   /* Buscador  */
   searchOptions(value: string) {
-    const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
+    
     const endpoint = `${this.apiUrl}`;
-    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
     const params = new HttpParams().set('search', value)
-    return this.http.get<any>(endpoint, /* { headers: headers, withCredentials: true, params } */)
+    return this.http.get<any>(endpoint)
   }
   /* Buscador */
 
@@ -58,26 +78,17 @@ export class OptionsService {
       delete data['options']
     }
 
-    const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
     const endpoint = `${this.apiUrl}`;
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    })
-
     const body = {...data }
 
     /* let formData = new FormData(); */
-
-
-    return this.http.post<any>(endpoint, body, /* { headers: headers, withCredentials: true } */)
+    return this.http.post<any>(endpoint, body)
   }
 
   updateOption(data: any | Object,id:string ) {
 
-    const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
     const endpoint = `${this.apiUrl}/${id}`;
-    const headers = new HttpHeaders({'Authorization': `Bearer ${token}`})
-
+  
     delete data['id_']
 
     if (data['action'] === '') {
@@ -91,23 +102,17 @@ export class OptionsService {
     const body = {...data}
 
    /*  let formData = new FormData(); */
-    return this.http.patch<any>(endpoint, body,/*  { headers: headers, withCredentials: true } */)
+    return this.http.patch<any>(endpoint, body)
   }
 
   deleteOption(id: string) {
-
-    const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
     const endpoint = `${this.apiUrl}/${id}`;
-    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
-
     return this.http.delete<any>(endpoint, /* { headers: headers, withCredentials: true } */)
   }
 
-  getOptions() {
-    const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
+  getOptions() { 
     const endpoint = `${this.apiUrl}`;
-    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
-    return this.http.get<RespOptions>(endpoint,/*  { headers: headers, withCredentials: true } */)/* .pipe(map((resp)=>{
+    return this.http.get<RespOptions>(endpoint)/* .pipe(map((resp)=>{
       let data = resp.results.filter((item)=> !item.hasOwnProperty('parentOpt'))
       return data
     })) */

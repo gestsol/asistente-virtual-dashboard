@@ -5,8 +5,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import Swal from 'sweetalert2'
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { OptionsService } from '../../services/options.service';
+import { ModalAssistantsComponent } from './modal-assistants/modal-assistants.component';
 export interface PeriodicElement {
   name: string;
   position: number;
@@ -65,6 +66,15 @@ export class AssistantsComponent implements OnInit {
           this.cd.markForCheck()
         })
 
+  }
+
+  openPopUp(data: any = {}, isNew?:any) {
+    let title = isNew ? 'Añadir Asistente' : 'Actualizar Asistente';
+    let dialogRef: MatDialogRef<any> = this.dialog.open(ModalAssistantsComponent, {
+      width: '900px',
+      /* disableClose: true, */
+      data: { title: title, payload: data}
+    })
   }
 
   presentLoader(){

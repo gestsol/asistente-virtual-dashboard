@@ -1,6 +1,15 @@
 {
-  "name": "dashboard",
-  "version": "0.0.0",
+  "name": "dashboard-asistente-virtual",
+  "version": "1.0.0",
+  "description": "Dashboard para gestion de mensajes Whatsapp para los Asistentes Virtuales",
+  "license": "UNLICENSED",
+  "author": "WIT",
+  "contributors": [
+    {
+      "name": "andersonar12",
+      "email": "aromerocangri.14@gmail.com"
+    }
+  ],
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

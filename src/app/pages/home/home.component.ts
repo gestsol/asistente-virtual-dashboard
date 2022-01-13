@@ -34,7 +34,9 @@ export class HomeComponent implements OnInit {
   constructor(private cd: ChangeDetectorRef,private snack: MatSnackBar,private dialog: MatDialog, public optionService:OptionsService) { }
 
   ngOnInit(): void {
-    this.presentLoader()
+
+    localStorage.setItem('token',JSON.stringify({token:'prueba'}))
+    /* this.optionService.presentLoader() */
     this.getAllData()
   }
   
@@ -72,7 +74,7 @@ export class HomeComponent implements OnInit {
       if(!res) {
         return;
       }
-      this.presentLoader()
+      this.optionService.presentLoader()
  
       if (isNew) {
 
@@ -82,7 +84,7 @@ export class HomeComponent implements OnInit {
           Swal.fire('Realizado','Opción Agregada','success')
         }).catch((e)=>{
           console.log(e)
-          this.presentAlert(e.error.error)
+          this.optionService.presentAlert(e.error.error)
         })
 
 
@@ -93,7 +95,7 @@ export class HomeComponent implements OnInit {
           Swal.fire('Realizado','Opción Actualizada','success')
           /* console.log(resp) */
         }).catch((e)=>{console.log(e.error.error)
-          this.presentAlert(e.error.error)
+          this.optionService.presentAlert(e.error.error)
         })
 
       }
@@ -108,24 +110,7 @@ export class HomeComponent implements OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   } */
 
-  presentLoader(){
-    Swal.fire({
-      title: 'Cargando',
-      allowOutsideClick: false,
-      timerProgressBar: true,
-      didOpen: () => {
-        Swal.showLoading()
-      },
-    })
-  }
-
-  presentAlert(msg:string){
-    Swal.fire({
-      title: 'Alerta',
-      html: `${msg}` ,
-      icon: 'error',
-    })
-  }
+  
 
   deleteItem(item:any) {
     console.log(item);
@@ -141,7 +126,7 @@ export class HomeComponent implements OnInit {
       
       
       if (result.isConfirmed) {
-        this.presentLoader()
+        this.optionService.presentLoader()
         this.optionService.deleteOption(item._id).toPromise().then((res)=>{
           
           this.getAllData() 

@@ -24,6 +24,7 @@ import { OptionComponent } from './home/option/option.component';
 import {MatTreeModule} from '@angular/material/tree';
 import { ComponentsModule } from '../components/components.module';
 import { AssistantsComponent } from './assistants/assistants.component';
+import { ModalAssistantsComponent } from './assistants/modal-assistants/modal-assistants.component';
 const Components = [
   PagesComponent,
   HomeComponent,
@@ -32,7 +33,7 @@ const Components = [
 
 
 @NgModule({
-  declarations: [...Components, AssistantsComponent ],
+  declarations: [...Components, AssistantsComponent, ModalAssistantsComponent ],
   imports: [
     CommonModule,
     FormsModule,
