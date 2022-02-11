@@ -3,7 +3,7 @@
   <div class="container-fluid">
     <div class="row">
   
-      <div class="pr-1 col-4">
+      <div class="pr-1 col-3">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Numero Opcion:</mat-label>
           <input matInput name="optionNumber" type="number" min="1" (keyup)="validMinValue($event)" formControlName="optionNumber" placeholder="Numero Opcion">
@@ -16,7 +16,7 @@
         </mat-form-field>
       </div>
   
-      <div class="pr-1 col">
+      <div class="pr-1 col-6">
         
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Descripción</mat-label>
@@ -27,6 +27,7 @@
         </mat-form-field>
   
       </div>
+
   
       <div class="col-12">
         <h5 class="text-center">Acciones (Opcionales)</h5>
@@ -70,7 +71,7 @@
                 </mat-form-field>
   
                 <div class="col-1 d-flex align-items-center">
-                  <button (click)="deleteOption(i)" type="button">X</button>
+                  <button (click)="deleteOption(i)" type="button" class="btn btn-danger btn-sm rounded-circle">X</button>
                 </div>
               </div>
   

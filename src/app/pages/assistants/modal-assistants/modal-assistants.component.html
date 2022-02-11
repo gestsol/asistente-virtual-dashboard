@@ -1,3 +1,73 @@
 <h1 matDialogTitle class="text-center text-white mb-2 pt-2 pb-2" style="background-color: #212121;">{{data.title}}</h1>
 
-<p>modal-assistants works!</p>
+<form [formGroup]="itemForm" class="container-fluid">
+
+    <div class="row">
+  
+      <div class="pr-1 col-6">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>Nombre</mat-label>
+          <input matInput name="name" formControlName="name" placeholder="Nombre">
+          <mat-error *ngIf="itemForm.controls['name'].hasError('required')">
+            Nombre es requerido
+          </mat-error>
+        </mat-form-field>
+      </div>
+  
+      <div class="pr-1 col-6">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>Telefono</mat-label>
+          <input matInput name="phone" type="text" formControlName="phone" (keyup)="setPrefixNumber($event.srcElement)">
+          <mat-error *ngIf="itemForm.controls['phone'].hasError('required')">
+            Numero es requerido
+          </mat-error>
+          <mat-error *ngIf="itemForm.controls['phone'].hasError('minlength')">
+               Debe tener minimo 9 caracteres 
+            </mat-error>
+        </mat-form-field>
+  
+      </div>
+
+      <div class="col-12 text-center">
+        <p><strong>Informacion WASI</strong></p>
+        <mat-radio-group [(ngModel)]="wasiInfo" [ngModelOptions]="{standalone: true}" color="primary">
+          <mat-radio-button [value]="true"> Si </mat-radio-button>
+          <mat-radio-button class="ms-2" [value]="false"> No </mat-radio-button>
+        </mat-radio-group>
+      
+      </div>
+  
+      <div class="pr-1 col-6" *ngIf="wasiInfo">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>WASI Device Id</mat-label>
+          <input matInput name="wasi_device_id" formControlName="wasi_device_id" placeholder="WASI Device Id" type="text">
+          <!-- <mat-error *ngIf="itemForm.controls['wasi_device_id'].hasError('required')">
+            WASI Device Id es requerido
+          </mat-error> -->
+        </mat-form-field>
+      </div>
+  
+      <div class="pr-1 col-6" *ngIf="wasiInfo">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>Wasi Token</mat-label>
+          <input matInput name="wasi_token" formControlName="wasi_token" placeholder="Wasi Token" type="text">
+         <!--  <mat-error *ngIf="itemForm.controls['wasi_token'].hasError('required')">
+            Wasi Token es requerido
+          </mat-error> -->
+        </mat-form-field>
+      </div>
+  
+    </div>
+
+    <div class="row d-flex justify-content-between mb-3">
+        <div class="col-2">
+          <button class="btn btn-primary" type="button" [disabled]="itemForm.invalid" (click)="submit()" > Guardar
+          </button>
+        </div>
+  
+        <div class="col-2">
+          <button (click)="dialogRef.close(false)" type="button" class="btn btn-danger">Cancelar </button>
+        </div>
+      </div>
+  
+  </form>

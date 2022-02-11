@@ -1,32 +1,11 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { forkJoin, Subscription } from 'rxjs';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatSort } from '@angular/material/sort';
-import {MatTableDataSource} from '@angular/material/table';
-import Swal from 'sweetalert2'
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { OptionsService } from '../../services/options.service';
 import { ModalAssistantsComponent } from './modal-assistants/modal-assistants.component';
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-}
-
-const ELEMENT_DATA: PeriodicElement[] = [
-  {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
-  {position: 2, name: 'Helium', weight: 4.0026, symbol: 'He'},
-  {position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li'},
-  {position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be'},
-  {position: 5, name: 'Boron', weight: 10.811, symbol: 'B'},
-  {position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C'},
-  {position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N'},
-  {position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O'},
-  {position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F'},
-  {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne'},
-];
+import { AssistantsService } from '../../services/assistants.service';
+import { VirtualAssistant } from '../../types/types';
+import { UtilsService } from '../../services/utils.service';
 
 @Component({
   selector: 'app-assistants',
@@ -35,65 +14,82 @@ const ELEMENT_DATA: PeriodicElement[] = [
 })
 export class AssistantsComponent implements OnInit {
 
-  public displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
-  public dataSource = ELEMENT_DATA;
-  public getAllDataSub?: Subscription;
+  public columnsForTable = ["name", "phone", "wasi_device_id", "wasi_token"];
+  public headersForTable = {
+    name: 'Nombre',
+    phone: 'Telefono',
+    wasi_device_id: 'Id Dispositivo Wasi',
+    wasi_token: 'Wasi Token'
+  }
+
+  public dataForTable!: VirtualAssistant[]
+  public getDataSub?: Subscription;
 
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-
-  constructor(private cd: ChangeDetectorRef,private snack: MatSnackBar,private dialog: MatDialog, public optionService:OptionsService) { }
+  constructor(private cd: ChangeDetectorRef,
+    private dialog: MatDialog,
+    public optionService: OptionsService,
+    public asist: AssistantsService,
+    public utils: UtilsService
+  ) { }
 
   ngOnInit(): void {
+    this.getData()
   }
 
-  getAllData() {
-    this.getAllDataSub = forkJoin([this.optionService.getOptions()])
-      .subscribe((([options ]) => {
-        /* console.log('Options',options)
-        
-        this.options = options['results'].filter((item)=> !item.hasOwnProperty('parentOpt'))
-
-        this.dataSourceTree.data = this.options */
-      }),
-        error => {
-          console.log(error)
-        },
-        () => {
-          /* this.filterPredicated() */
-          Swal.close()
-          this.cd.markForCheck()
-        })
-
+  getData() {
+    this.getDataSub = this.asist.assistants.subscribe((res) => this.dataForTable = res)
   }
 
-  openPopUp(data: any = {}, isNew?:any) {
+  openPopUp(data = {} as VirtualAssistant | {}, isNew?: boolean) {
     let title = isNew ? 'Añadir Asistente' : 'Actualizar Asistente';
     let dialogRef: MatDialogRef<any> = this.dialog.open(ModalAssistantsComponent, {
       width: '900px',
       /* disableClose: true, */
-      data: { title: title, payload: data}
+      data: { title: title, payload: data }
     })
+
+    dialogRef.afterClosed().subscribe((res) => {
+      if (!res) {
+        // If user press cancel
+        return;
+      }
+      this.utils.presentLoader()
+      if (isNew) {
+        this.asist.addAssistant(res).toPromise().then((res) => {
+          this.dataForTable = []
+          this.asist.getAssistansVirtuals().then(res => this.asist.setAssistants(res.results))
+          this.utils.successAlert('Realizado', 'Asistente agregado')
+        })
+
+      } else {
+        this.asist.updateAssistant(res, res._id).toPromise().then((res) => {
+          this.dataForTable = []
+          this.asist.getAssistansVirtuals().then(res => this.asist.setAssistants(res.results))
+          this.utils.successAlert('Realizado', 'Asistente Actualizado')
+        })
+      }
+
+    }
+    )
   }
 
-  presentLoader(){
-    Swal.fire({
-      title: 'Cargando',
-      allowOutsideClick: false,
-      timerProgressBar: true,
-      didOpen: () => {
-        Swal.showLoading()
-      },
-    })
+  deleteItem(item: VirtualAssistant) {
+    console.log(item);
+    this.utils.deleteItem(item.name).then((result) => {
+      if (result.isConfirmed) {
+        this.utils.presentLoader();
+        this.asist.deleteAssistant(item._id).toPromise()
+          .then((res) => {
+            this.dataForTable = []
+            this.asist.getAssistansVirtuals().then(res => this.asist.setAssistants(res.results))
+            this.asist.setCurrentAssistant({} as VirtualAssistant)
+            this.utils.successAlert('Realizado', 'Asistente Eliminado')
+          });
+      }
+    });
   }
 
-  presentAlert(msg:string){
-    Swal.fire({
-      title: 'Alerta',
-      html: `${msg}` ,
-      icon: 'error',
-    })
-  }
+  ngOnDestroy = () => this.getDataSub?.unsubscribe()
 
 }

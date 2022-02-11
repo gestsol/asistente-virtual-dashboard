@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AssistantsService } from '../services/assistants.service';
 
 @Component({
   selector: 'app-pages',
@@ -6,9 +7,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PagesComponent implements OnInit {
 
-  constructor() { }
+  constructor(public asist: AssistantsService) { }
 
   ngOnInit(): void {
+
+    this.asist.getAssistansVirtuals().then(res => this.asist.setAssistants(res.results))
   }
 
 }

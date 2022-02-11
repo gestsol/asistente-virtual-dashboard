@@ -5,24 +5,18 @@
             <img src="assets/images/asistente.png" width="30px" alt="" srcset="">
           <span class="ms-3 fs-4">Asistente Virtual</span>
         </a>
-        <select class="form-select mt-3" aria-label="Default select example">
-            <option selected>Selecciona un Asistente</option>
-            <option value="1">Molynor</option>
-            <option value="2">Las Condes</option>
-            <option value="3">Teniente</option>
+        <select class="form-select mt-3 animate__animated {{ (assitants.length === 0) ? 'animate__headShake animate__infinite	infinite' : '' }}" #selectList (change)="selectAssistant(selectList.value)" >
+            <option value="null">Selecciona un Asistente</option>
+            <option *ngIf="assitants.length === 0">No hay Asistentes creados</option>
+            <option *ngFor="let item of assitants" [value]="item | json">{{ item.name }}</option>
+
           </select>
         <hr>
         <ul class="nav nav-pills flex-column mb-auto">
-          <li class="nav-item">
-            <a routerLink="/pages/home" routerLinkActive="active" class="nav-link text-white  d-flex align-items-center" aria-current="page">
-                <mat-icon aria-hidden="false" >account_tree</mat-icon>
-                <p class="ms-2 mb-0">Arbol de Opciones</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a routerLink="/pages/assistants" routerLinkActive="active" class="nav-link text-white d-flex align-items-center" aria-current="page">
-                <mat-icon aria-hidden="false" >manage_accounts</mat-icon>
-                <p class="ms-2 mb-0 ">Asistentes</p>
+          <li class="nav-item" *ngFor="let item of itemsNavbar">
+            <a [routerLink]="item.link" routerLinkActive="active" class="nav-link text-white  d-flex align-items-center" aria-current="page">
+                <mat-icon aria-hidden="false" [innerText]="item.icon"></mat-icon>
+                <p class="ms-2 mb-0" [innerText]="item.text"></p>
             </a>
           </li>
 

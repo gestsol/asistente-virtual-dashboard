@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { AssistantsService } from '../../services/assistants.service';
+import { VirtualAssistant } from '../../types/types';
 
 @Component({
   selector: 'app-sidebar',
@@ -7,9 +9,30 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SidebarComponent implements OnInit {
 
-  constructor() { }
+  public itemsNavbar = [
+    {
+      link: '/pages/home',
+      icon: 'account_tree',
+      text: 'Arbol de Opciones'
+    },
+    {
+      link: '/pages/assistants',
+      icon: 'manage_accounts',
+      text: 'Asistentes'
+    }
+  ]
 
-  ngOnInit(): void {
+  public assitants!: VirtualAssistant[]
+
+  constructor(public asist: AssistantsService) { }
+
+  ngOnInit() {
+    this.asist.assistants.subscribe(res => this.assitants = res)
+  }
+
+  selectAssistant(selection: string) {
+    let assistantSelected = JSON.parse(selection)
+    assistantSelected && this.asist.setCurrentAssistant(assistantSelected)
   }
 
 }

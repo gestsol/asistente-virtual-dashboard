@@ -9,50 +9,35 @@ import { map } from 'rxjs/operators';
 export class AuthService {
 
   public apiUrl = ''
-  /* public token:string | undefined  = '' */
 
+  public headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Accept': '*/*'
+  })
   constructor(private http: HttpClient) { }
-  
+
   signIn(data: any) {
-
-    /* console.log(user) */
-
     const endpoint = `${this.apiUrl}/users/sign_in`;
-
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Accept': '*/*'
-    })
-
     const body = {
       email: data.email,
       password: data.password
     }
 
-    return this.http.post<any>(endpoint, JSON.stringify(body), { headers: headers, withCredentials: true })
+    return this.http.post<any>(endpoint, JSON.stringify(body), { headers: this.headers })
   }
 
-  signUp(data:any) {
-    const endpoint = `${ this.apiUrl }/users/sign_up`;
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Accept': '*/*'})
-
+  signUp(data: any) {
+    const endpoint = `${this.apiUrl}/users/sign_up`;
     let body = {}
 
-    return this.http.post<any>(endpoint,body, { headers: headers, withCredentials: true })
+    return this.http.post<any>(endpoint, body, { headers: this.headers })
   }
 
-  logOut (){
-
-    const token = localStorage.getItem('token')?.replace('"','').replace('"','') 
+  logOut() {
     const endpoint = `${this.apiUrl}/log_out`;
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-    })
 
-    return this.http.post<any>(endpoint, null,{ headers: headers})
-    
+    return this.http.post<any>(endpoint, null)
+
   }
 
 }
